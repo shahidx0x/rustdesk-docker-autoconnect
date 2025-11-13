@@ -1,0 +1,11 @@
+rendezvous_server = 'rustdesk.eravend.net:21116'
+nat_type = 2
+serial = 0
+unlock_pin = ''
+trusted_devices = ''
+
+[options]
+av1-test = 'Y'
+key = 'AJlE3oVy3SooH7p78fTBqiXnC9t66Ci+GnbkG4hKsJI='
+custom-rendezvous-server = 'rustdesk.eravend.net'
+local-ip-addr = '172.17.0.3'
