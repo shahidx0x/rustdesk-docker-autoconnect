@@ -29,6 +29,7 @@ RUN mkdir -p $HOME/.local/share/applications $HOME/Desktop $HOME/.config/autosta
     && ln -s /rustdesk.desktop $HOME/.config/autostart/rustdesk.desktop
 
 ######### End Customizations ###########
+######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
