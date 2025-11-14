@@ -4,6 +4,7 @@ USER root
 ENV HOME=/home/kasm-default-profile
 ENV STARTUPDIR=/dockerstartup
 ENV INST_SCRIPTS=$STARTUPDIR/install
+ENV VNC_SSL=0
 WORKDIR $HOME
 
 
