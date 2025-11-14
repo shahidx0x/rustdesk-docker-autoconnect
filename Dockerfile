@@ -110,17 +110,30 @@ RUN echo '[Desktop Entry]' > $HOME/.config/autostart/rustdesk-autoconnect.deskto
     && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
     && echo 'Name=RustDesk Auto Connect' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop
 
-# Hide XFCE panel (top bar) - set to autohide
-RUN mkdir -p $HOME/.config/xfce4/xfconf/xfce-perchannel-xml \
-    && echo '<?xml version="1.0" encoding="UTF-8"?>' > $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '<channel name="xfce4-panel" version="1.0">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '  <property name="configver" type="int" value="2"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '  <property name="panels" type="array">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '    <value type="int" value="1"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '  </property>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '  <property name="panel-1" type="empty">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '    <property name="autohide-behavior" type="uint" value="1"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '  </property>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
-    && echo '</channel>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+# Create script to hide XFCE panel after desktop loads
+RUN echo '#!/bin/bash' > /usr/local/bin/hide-panel.sh \
+    && echo 'sleep 8' >> /usr/local/bin/hide-panel.sh \
+    && echo '# Try to hide XFCE panel using xfconf-query' >> /usr/local/bin/hide-panel.sh \
+    && echo 'export DISPLAY=:1' >> /usr/local/bin/hide-panel.sh \
+    && echo 'export XAUTHORITY=/home/kasm-user/.Xauthority' >> /usr/local/bin/hide-panel.sh \
+    && echo 'su - kasm-user -c "xfconf-query -c xfce4-panel -p /panels/panel-1/autohide-behavior -s 1" 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
+    && echo '# Alternative: try to kill and remove panel' >> /usr/local/bin/hide-panel.sh \
+    && echo 'pkill -f "xfce4-panel" 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
+    && echo 'sleep 1' >> /usr/local/bin/hide-panel.sh \
+    && echo '# Hide any remaining panels using xdotool' >> /usr/local/bin/hide-panel.sh \
+    && echo 'WINDOW=$(xdotool search --class "Xfce4-panel" 2>/dev/null | head -1)' >> /usr/local/bin/hide-panel.sh \
+    && echo 'if [ ! -z "$WINDOW" ]; then' >> /usr/local/bin/hide-panel.sh \
+    && echo '  xdotool windowunmap $WINDOW 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
+    && echo 'fi' >> /usr/local/bin/hide-panel.sh \
+    && chmod +x /usr/local/bin/hide-panel.sh
+
+# Add panel hiding script to autostart
+RUN echo '[Desktop Entry]' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'Type=Application' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'Exec=/usr/local/bin/hide-panel.sh' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'Hidden=false' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'NoDisplay=false' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/hide-panel.desktop \
+    && echo 'Name=Hide Panel' >> $HOME/.config/autostart/hide-panel.desktop
 
 RUN chown -R 1000:0 $HOME/.config $HOME
