@@ -67,9 +67,9 @@ RUN apt-get update && apt-get install -y xdotool && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /etc/kasmvnc \
     && cat > /etc/kasmvnc/kasmvnc.yaml << 'EOF'
 network:
-  protocol: http
-  ssl:
-    require_ssl: false
+    pem_certificate: /certs/full.pem
+    pem_key: /certs/priv.pem
+    require_ssl: true
   udp:
     public_ip: 127.0.0.1
 runtime_configuration:

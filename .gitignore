@@ -1,0 +1,5 @@
+*.pem
+*key*
+*cert*
+ca-bundle.txt
+private-key.txt
