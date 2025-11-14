@@ -69,8 +69,6 @@ RUN mkdir -p /etc/kasmvnc \
 network:
   protocol: http
   ssl:
-    pem_certificate: ${HOME}/.vnc/self.pem
-    pem_key: ${HOME}/.vnc/self.pem
     require_ssl: false
   udp:
     public_ip: 127.0.0.1
