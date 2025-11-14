@@ -4,7 +4,7 @@ USER root
 ENV HOME=/home/kasm-default-profile
 ENV STARTUPDIR=/dockerstartup
 ENV INST_SCRIPTS=$STARTUPDIR/install
-ENV VNC_SSL=0
+# ENV VNC_SSL=0
 # Remove SSL certificates to force HTTP-only mode
 # Certificate locations that may exist depending on KasmVNC version:
 # - /etc/ssl/certs/ssl-cert-snakeoil.pem (public cert)
@@ -14,9 +14,9 @@ ENV VNC_SSL=0
 # - /opt/kasm/current/certs/kasm_nginx.key (Kasm nginx key)
 # To use custom certificates, you can pass -cert and -key arguments to vncserver:
 # vncserver -cert /path/to/cert.pem -key /path/to/key.pem
-RUN rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/private/ssl-cert-snakeoil.key 2>/dev/null || true \
-    && rm -f /etc/ssl/private/kasmvnc.pem 2>/dev/null || true \
-    && rm -f /opt/kasm/current/certs/kasm_nginx.crt /opt/kasm/current/certs/kasm_nginx.key 2>/dev/null || true
+# RUN rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/private/ssl-cert-snakeoil.key 2>/dev/null || true \
+#     && rm -f /etc/ssl/private/kasmvnc.pem 2>/dev/null || true \
+#     && rm -f /opt/kasm/current/certs/kasm_nginx.crt /opt/kasm/current/certs/kasm_nginx.key 2>/dev/null || true
 WORKDIR $HOME
 
 
@@ -62,6 +62,23 @@ COPY --chown=1000:0 Rustdesk_local.toml $HOME/.config/rustdesk/RustDesk_local.to
 
 # Install xdotool for GUI automation
 RUN apt-get update && apt-get install -y xdotool && rm -rf /var/lib/apt/lists/*
+
+# Create KasmVNC configuration to force HTTP-only mode
+RUN mkdir -p /etc/kasmvnc \
+    && cat > /etc/kasmvnc/kasmvnc.yaml << 'EOF'
+network:
+  protocol: http
+  ssl:
+    pem_certificate: ${HOME}/.vnc/self.pem
+    pem_key: ${HOME}/.vnc/self.pem
+    require_ssl: false
+  udp:
+    public_ip: 127.0.0.1
+runtime_configuration:
+  allow_override_standard_vnc_server_settings: true
+  allow_override_list:
+    - pointer.enabled
+EOF
 
 # Create auto-connect script
 RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
