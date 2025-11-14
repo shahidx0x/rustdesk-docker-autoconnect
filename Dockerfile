@@ -6,7 +6,8 @@ ENV STARTUPDIR=/dockerstartup
 ENV INST_SCRIPTS=$STARTUPDIR/install
 ENV VNC_SSL=0
 # Remove SSL certificates to force HTTP-only mode
-RUN rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/private/ssl-cert-snakeoil.key 2>/dev/null || true
+RUN rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/private/ssl-cert-snakeoil.key 2>/dev/null || true \
+    && rm -f /opt/kasm/current/certs/kasm_nginx.crt /opt/kasm/current/certs/kasm_nginx.key 2>/dev/null || true
 WORKDIR $HOME
 
 
