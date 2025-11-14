@@ -110,4 +110,17 @@ RUN echo '[Desktop Entry]' > $HOME/.config/autostart/rustdesk-autoconnect.deskto
     && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
     && echo 'Name=RustDesk Auto Connect' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop
 
+# Hide XFCE panel (top bar) - set to autohide
+RUN mkdir -p $HOME/.config/xfce4/xfconf/xfce-perchannel-xml \
+    && echo '<?xml version="1.0" encoding="UTF-8"?>' > $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '<channel name="xfce4-panel" version="1.0">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '  <property name="configver" type="int" value="2"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '  <property name="panels" type="array">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '    <value type="int" value="1"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '  </property>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '  <property name="panel-1" type="empty">' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '    <property name="autohide-behavior" type="uint" value="1"/>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '  </property>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml \
+    && echo '</channel>' >> $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+
 RUN chown -R 1000:0 $HOME/.config $HOME
