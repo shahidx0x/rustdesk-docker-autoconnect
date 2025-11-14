@@ -77,9 +77,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    # Type the Remote ID' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    xdotool type --delay 50 "$REMOTE_ID"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    # Click Connect button' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool mousemove 472 218' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    echo "Remote ID entered successfully"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    sleep 2' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    # Check if REMOTE_PASS is provided' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    if [ ! -z "$REMOTE_PASS" ]; then' >> /usr/local/bin/rustdesk-autoconnect.sh \
