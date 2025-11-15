@@ -24,10 +24,8 @@ COPY rustdesk.desktop /rustdesk.desktop
 # COPY rustdesk.png /rustdesk.png
 # COPY wallpaper.png /usr/share/backgrounds/bg_default.png
 
-RUN mkdir -p $HOME/.local/share/applications $HOME/Desktop $HOME/.config/autostart \
-    && ln -s /rustdesk.desktop $HOME/Desktop/rustdesk.desktop \
-    && ln -s /rustdesk.desktop $HOME/.local/share/applications/rustdesk.desktop \
-    && ln -s /rustdesk.desktop $HOME/.config/autostart/rustdesk.desktop
+# Don't autostart RustDesk automatically - let our script control it
+# RUN ln -s /rustdesk.desktop $HOME/.config/autostart/rustdesk.desktop
 
 ######### End Customizations ###########
 
@@ -58,26 +56,26 @@ COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 COPY rustdesk-autoconnect.sh /usr/local/bin/rustdesk-autoconnect.sh
 RUN chmod +x /usr/local/bin/rustdesk-autoconnect.sh
 
-# Add auto-connect script to autostart
-RUN echo '[Desktop Entry]' > $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'Type=Application' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'Exec=/usr/local/bin/rustdesk-autoconnect.sh' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'Hidden=false' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'NoDisplay=false' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
-    && echo 'Name=RustDesk Auto Connect' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop
+# Create startup script that runs after desktop loads
+RUN mkdir -p /dockerstartup/custom \
+    && echo '#!/bin/bash' > /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'echo "Starting RustDesk automation..."' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'export DISPLAY=:1' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'export XAUTHORITY=/home/kasm-user/.Xauthority' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'sleep 5' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'echo "Launching RustDesk..."' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'su - kasm-user -c "rustdesk" &' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'sleep 10' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'echo "Running panel hiding script..."' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'su - kasm-user -c "/usr/local/bin/hide-panel.sh" &' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'sleep 2' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'echo "Running automation script..."' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'su - kasm-user -c "/usr/local/bin/rustdesk-autoconnect.sh" &' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && echo 'echo "RustDesk automation setup complete"' >> /dockerstartup/custom/rustdesk-autostart.sh \
+    && chmod +x /dockerstartup/custom/rustdesk-autostart.sh
 
 # Copy and setup panel hiding script
 COPY hide-panel.sh /usr/local/bin/hide-panel.sh
 RUN chmod +x /usr/local/bin/hide-panel.sh
-
-# Add panel hiding script to autostart
-RUN echo '[Desktop Entry]' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'Type=Application' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'Exec=/usr/local/bin/hide-panel.sh' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'Hidden=false' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'NoDisplay=false' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/hide-panel.desktop \
-    && echo 'Name=Hide Panel' >> $HOME/.config/autostart/hide-panel.desktop
 
 RUN chown -R 1000:0 $HOME/.config $HOME
