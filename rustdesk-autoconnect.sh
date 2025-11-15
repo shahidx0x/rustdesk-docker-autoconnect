@@ -3,6 +3,8 @@
 # Configuration variables - easily adjustable coordinates
 REMOTE_ID_X=271
 REMOTE_ID_Y=165
+CONNECT_BUTTON_X=472
+CONNECT_BUTTON_Y=218
 PASSWORD_X=614
 PASSWORD_Y=408
 OK_BUTTON_X=730
@@ -30,7 +32,11 @@ if [ ! -z "$REMOTE_ID" ]; then
     # Type the Remote ID
     xdotool type --delay 50 "$REMOTE_ID"
     sleep 1
-    echo "Remote ID entered successfully"
+    # Click Connect button
+    xdotool mousemove $CONNECT_BUTTON_X $CONNECT_BUTTON_Y
+    xdotool click 1
+    sleep 1
+    echo "Remote ID entered and Connect clicked"
     sleep 2
     # Check if REMOTE_PASS is provided
     if [ ! -z "$REMOTE_PASS" ]; then
@@ -48,7 +54,7 @@ if [ ! -z "$REMOTE_ID" ]; then
       xdotool click 1
       echo "Password entered and OK clicked"
     fi
-    echo "Remote ID entered and Connect clicked"
+    echo "Connection process completed"
   else
     echo "RustDesk window not found"
   fi
