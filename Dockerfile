@@ -66,54 +66,9 @@ RUN apt-get update && apt-get install -y xdotool && rm -rf /var/lib/apt/lists/*
 # Copy KasmVNC configuration (certificates will be bind-mounted at runtime)
 COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 
-# Create auto-connect script
-RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo 'sleep 5' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo 'if [ ! -z "$REMOTE_ID" ]; then' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  echo "Auto-filling Remote ID: $REMOTE_ID"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  # Wait for RustDesk to fully load' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  for i in {1..5}; do' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    WINDOW=$(xdotool search --name "RustDesk" 2>/dev/null | head -1)' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    if [ ! -z "$WINDOW" ]; then' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      break' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  done' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  if [ ! -z "$WINDOW" ]; then' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    echo "Found RustDesk window: $WINDOW"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool windowactivate $WINDOW' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    # Click on Remote ID input field' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool mousemove 271 165' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    # Type the Remote ID' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool type --delay 50 "$REMOTE_ID"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    echo "Remote ID entered successfully"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    sleep 2' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    # Check if REMOTE_PASS is provided' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    if [ ! -z "$REMOTE_PASS" ]; then' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      echo "Entering remote password: $REMOTE_PASS"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      sleep 2' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      # Click on password input field' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool mousemove 614 408' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      # Type the password' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool type --delay 50 "$REMOTE_PASS"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      # Click OK button' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool mousemove 730 509' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      echo "Password entered and OK clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    echo "Remote ID entered and Connect clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  else' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    echo "RustDesk window not found"' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '  fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo 'fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && chmod +x /usr/local/bin/rustdesk-autoconnect.sh
+# Copy and setup auto-connect script
+COPY rustdesk-autoconnect.sh /usr/local/bin/rustdesk-autoconnect.sh
+RUN chmod +x /usr/local/bin/rustdesk-autoconnect.sh
 
 # Add auto-connect script to autostart
 RUN echo '[Desktop Entry]' > $HOME/.config/autostart/rustdesk-autoconnect.desktop \
@@ -124,22 +79,9 @@ RUN echo '[Desktop Entry]' > $HOME/.config/autostart/rustdesk-autoconnect.deskto
     && echo 'X-GNOME-Autostart-enabled=true' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop \
     && echo 'Name=RustDesk Auto Connect' >> $HOME/.config/autostart/rustdesk-autoconnect.desktop
 
-# Create script to hide XFCE panel after desktop loads
-RUN echo '#!/bin/bash' > /usr/local/bin/hide-panel.sh \
-    && echo 'sleep 8' >> /usr/local/bin/hide-panel.sh \
-    && echo '# Try to hide XFCE panel using xfconf-query' >> /usr/local/bin/hide-panel.sh \
-    && echo 'export DISPLAY=:1' >> /usr/local/bin/hide-panel.sh \
-    && echo 'export XAUTHORITY=/home/kasm-user/.Xauthority' >> /usr/local/bin/hide-panel.sh \
-    && echo 'su - kasm-user -c "xfconf-query -c xfce4-panel -p /panels/panel-1/autohide-behavior -s 1" 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
-    && echo '# Alternative: try to kill and remove panel' >> /usr/local/bin/hide-panel.sh \
-    && echo 'pkill -f "xfce4-panel" 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
-    && echo 'sleep 1' >> /usr/local/bin/hide-panel.sh \
-    && echo '# Hide any remaining panels using xdotool' >> /usr/local/bin/hide-panel.sh \
-    && echo 'WINDOW=$(xdotool search --class "Xfce4-panel" 2>/dev/null | head -1)' >> /usr/local/bin/hide-panel.sh \
-    && echo 'if [ ! -z "$WINDOW" ]; then' >> /usr/local/bin/hide-panel.sh \
-    && echo '  xdotool windowunmap $WINDOW 2>/dev/null || true' >> /usr/local/bin/hide-panel.sh \
-    && echo 'fi' >> /usr/local/bin/hide-panel.sh \
-    && chmod +x /usr/local/bin/hide-panel.sh
+# Copy and setup panel hiding script
+COPY hide-panel.sh /usr/local/bin/hide-panel.sh
+RUN chmod +x /usr/local/bin/hide-panel.sh
 
 # Add panel hiding script to autostart
 RUN echo '[Desktop Entry]' >> $HOME/.config/autostart/hide-panel.desktop \
