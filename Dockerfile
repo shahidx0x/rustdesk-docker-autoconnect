@@ -100,17 +100,21 @@ RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      echo "Entering remote password: $REMOTE_PASS"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      sleep 2' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      # Click on password input field' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool mousemove 614 408' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '      xdotool mousemove 910 488' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      # Type the password' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      xdotool type --delay 50 "$REMOTE_PASS"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      sleep 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      # Click OK button' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '      xdotool mousemove 730 509' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '      xdotool mousemove 1044 591' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      echo "Password entered and OK clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    # Click final button' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    xdotool mousemove 1574 134' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    echo "Final button clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    echo "Remote ID entered and Connect clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '  else' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    echo "RustDesk window not found"' >> /usr/local/bin/rustdesk-autoconnect.sh \
