@@ -4,19 +4,7 @@ USER root
 ENV HOME=/home/kasm-default-profile
 ENV STARTUPDIR=/dockerstartup
 ENV INST_SCRIPTS=$STARTUPDIR/install
-# ENV VNC_SSL=0
-# Remove SSL certificates to force HTTP-only mode
-# Certificate locations that may exist depending on KasmVNC version:
-# - /etc/ssl/certs/ssl-cert-snakeoil.pem (public cert)
-# - /etc/ssl/private/ssl-cert-snakeoil.key (private key)
-# - /etc/ssl/private/kasmvnc.pem (older versions - combined cert/key)
-# - /opt/kasm/current/certs/kasm_nginx.crt (Kasm nginx cert)
-# - /opt/kasm/current/certs/kasm_nginx.key (Kasm nginx key)
-# To use custom certificates, you can pass -cert and -key arguments to vncserver:
-# vncserver -cert /path/to/cert.pem -key /path/to/key.pem
-# RUN rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/private/ssl-cert-snakeoil.key 2>/dev/null || true \
-#     && rm -f /etc/ssl/private/kasmvnc.pem 2>/dev/null || true \
-#     && rm -f /opt/kasm/current/certs/kasm_nginx.crt /opt/kasm/current/certs/kasm_nginx.key 2>/dev/null || true
+
 WORKDIR $HOME
 
 
@@ -42,7 +30,7 @@ RUN mkdir -p $HOME/.local/share/applications $HOME/Desktop $HOME/.config/autosta
     && ln -s /rustdesk.desktop $HOME/.config/autostart/rustdesk.desktop
 
 ######### End Customizations ###########
-######### End Customizations ###########
+
 
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME

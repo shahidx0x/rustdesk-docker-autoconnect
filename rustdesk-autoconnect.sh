@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuration variables - easily adjustable coordinates
-REMOTE_ID_X=271
-REMOTE_ID_Y=165
+REMOTE_ID_X=320
+REMOTE_ID_Y=133
 CONNECT_BUTTON_X=470
 CONNECT_BUTTON_Y=187
 PASSWORD_X=900
@@ -32,7 +32,7 @@ if [ ! -z "$REMOTE_ID" ]; then
     xdotool click 1
     sleep 1
     # Type the Remote ID
-    xdotool type --delay 20 "$REMOTE_ID"
+    xdotool type --delay 50 "$REMOTE_ID"
     sleep 1
     # Click Connect button
     xdotool mousemove $CONNECT_BUTTON_X $CONNECT_BUTTON_Y
@@ -49,7 +49,7 @@ if [ ! -z "$REMOTE_ID" ]; then
       xdotool click 1
       sleep 1
       # Type the password
-      xdotool type --delay 20 "$REMOTE_PASS"
+      xdotool type --delay 50 "$REMOTE_PASS"
       sleep 1
       # Click OK button
       xdotool mousemove $OK_BUTTON_X $OK_BUTTON_Y
