@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# Configuration variables - easily adjustable coordinates
+REMOTE_ID_X=271
+REMOTE_ID_Y=165
+PASSWORD_X=614
+PASSWORD_Y=408
+OK_BUTTON_X=730
+OK_BUTTON_Y=509
+
 sleep 5
 if [ ! -z "$REMOTE_ID" ]; then
   echo "Auto-filling Remote ID: $REMOTE_ID"
@@ -15,7 +24,7 @@ if [ ! -z "$REMOTE_ID" ]; then
     xdotool windowactivate $WINDOW
     sleep 1
     # Click on Remote ID input field
-    xdotool mousemove 271 165
+    xdotool mousemove $REMOTE_ID_X $REMOTE_ID_Y
     xdotool click 1
     sleep 1
     # Type the Remote ID
@@ -28,14 +37,14 @@ if [ ! -z "$REMOTE_ID" ]; then
       echo "Entering remote password: $REMOTE_PASS"
       sleep 2
       # Click on password input field
-      xdotool mousemove 614 408
+      xdotool mousemove $PASSWORD_X $PASSWORD_Y
       xdotool click 1
       sleep 1
       # Type the password
       xdotool type --delay 50 "$REMOTE_PASS"
       sleep 1
       # Click OK button
-      xdotool mousemove 730 509
+      xdotool mousemove $OK_BUTTON_X $OK_BUTTON_Y
       xdotool click 1
       echo "Password entered and OK clicked"
     fi
