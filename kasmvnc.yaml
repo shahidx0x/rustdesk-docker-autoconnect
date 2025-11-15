@@ -1,9 +1,11 @@
 network:
+  udp:
+    public_ip: 127.0.0.1
+  ssl:
     pem_certificate: /certs/full.pem
     pem_key: /certs/priv.pem
     require_ssl: true
-udp:
-    public_ip: 127.0.0.1
+
 runtime_configuration:
   allow_override_standard_vnc_server_settings: true
   allow_override_list:
