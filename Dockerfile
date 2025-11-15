@@ -63,20 +63,8 @@ COPY --chown=1000:0 Rustdesk_local.toml $HOME/.config/rustdesk/RustDesk_local.to
 # Install xdotool for GUI automation
 RUN apt-get update && apt-get install -y xdotool && rm -rf /var/lib/apt/lists/*
 
-# Create KasmVNC configuration to force HTTP-only mode
-RUN mkdir -p /etc/kasmvnc \
-    && cat > /etc/kasmvnc/kasmvnc.yaml << 'EOF'
-network:
-    pem_certificate: /certs/full.pem
-    pem_key: /certs/priv.pem
-    require_ssl: true
-  udp:
-    public_ip: 127.0.0.1
-runtime_configuration:
-  allow_override_standard_vnc_server_settings: true
-  allow_override_list:
-    - pointer.enabled
-EOF
+# Copy KasmVNC configuration (certificates will be bind-mounted at runtime)
+COPY kasmvnc.yaml /etc/kasmvnc/kasmvnc.yaml
 
 # Create auto-connect script
 RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
