@@ -112,7 +112,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '      echo "Password entered and OK clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    fi' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    # Click final button' >> /usr/local/bin/rustdesk-autoconnect.sh \
-    && echo '    xdotool mousemove 1254 54' >> /usr/local/bin/rustdesk-autoconnect.sh \
+    && echo '    xdotool mousemove 1253 51' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    xdotool click 1' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    echo "Final button clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
     && echo '    echo "Remote ID entered and Connect clicked"' >> /usr/local/bin/rustdesk-autoconnect.sh \
